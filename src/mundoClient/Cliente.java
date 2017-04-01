@@ -168,7 +168,6 @@ public class Cliente extends Thread{
          	return "Se termino abruptamente la descarga ";
  		} 
     	cerrarConexion();
-    	interfaz.terminoDeDescargar();
     	inicioDescarga = false;
         return "El archivo fue correctamente descargado en la carpeta ./descargas";
     }
