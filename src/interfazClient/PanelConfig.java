@@ -28,7 +28,7 @@ public class PanelConfig extends JPanel{
 	public PanelConfig(InterfazCliente interfaz){
 		principal = interfaz;
 			
-		setBorder(new TitledBorder("Archivos"));
+		setBorder(new TitledBorder("Ingrese las especificaciones de envío"));
 		setLayout(new GridLayout(3,2));
 		
 		lbIP = new JLabel("Dirección IP: ");
@@ -44,10 +44,10 @@ public class PanelConfig extends JPanel{
 		txtNumObj = new JTextField();
 		
 		add(lbIP);
-		add(lbPuerto);
-		add(lbNumObj);
 		add(txtIP);
+		add(lbPuerto);
 		add(txtPuerto);
+		add(lbNumObj);
 		add(txtNumObj);
 		
 	}
