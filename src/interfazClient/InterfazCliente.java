@@ -1,10 +1,6 @@
 package interfazClient;
 
 import java.awt.BorderLayout;
-import java.io.File;
-import java.io.IOException;
-
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -36,9 +32,8 @@ public class InterfazCliente extends JFrame{
 	/**
      * Panel para desplegar archivos disponibles
      */
-	private PanelArchivos panelArchivos;
+	private PanelConfig panelConfig;
 	
-	private String listaFiles;
 	
 
 	//-----------------------------------------------------------------
@@ -59,15 +54,14 @@ public class InterfazCliente extends JFrame{
         //Incializo panel
 		panelEstado = new PanelEstadoConexion(this);
 		panelBotones= new PanelBotones(this);
-		panelArchivos = new PanelArchivos(this);
+		panelConfig = new PanelConfig(this);
 		
 		//Agrego a la interfaz
 		add( panelEstado, BorderLayout.NORTH );
-		add( panelArchivos, BorderLayout.CENTER );
+		add( panelConfig, BorderLayout.CENTER );
 		add( panelBotones, BorderLayout.SOUTH );
 		
 		cliente = new Cliente(this);
-		listaFiles= "No se ha establecido conexion";
 	}
 
 	//-----------------------------------------------------------------
@@ -77,14 +71,12 @@ public class InterfazCliente extends JFrame{
 	{
 		JOptionPane.showMessageDialog(null, "Iniciando conexión");
 		cliente = new Cliente(this);
-		listaFiles = cliente.iniciarConexion();
+		cliente.iniciarConexion();
 		JOptionPane.showMessageDialog(null, "Se ha establecido conexión");
-		panelArchivos.actualizarLabelFiles(listaFiles);
 	}
 	
 	public void cerrarConexion(){
 		cliente.cerrarConexion();
-		panelArchivos.cerrarConexion();
 		JOptionPane.showMessageDialog(null, "Ha cerrado la conexión");
 	}
 	

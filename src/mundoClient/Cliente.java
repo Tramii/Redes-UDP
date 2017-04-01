@@ -24,6 +24,7 @@ public class Cliente extends Thread{
 	private String tituloAPedir;
 	private boolean inicioDescarga;
 	
+	@SuppressWarnings("unused")
 	private InterfazCliente interfaz;
 	public Cliente(InterfazCliente interfazC)
 	{
