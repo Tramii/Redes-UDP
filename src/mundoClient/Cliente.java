@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.Socket;
 
 import interfazClient.InterfazCliente;
@@ -53,14 +55,18 @@ public class Cliente extends Thread{
 	 */
 	public String iniciarConexion(){
         
-        archivosDisponibles = "No se pudieron recuperar archivos. Intente conectar";
-        String host = "127.0.0.1";
 
         try {
-        	System.out.println("Creando socket en "+host  );
-			socket = new Socket(host, 8089);
+        	
+        	System.out.println("Creando socket en "+ip  );
+        	
+        	DatagramSocket clientSocket = new DatagramSocket();
+        	InetAddress IPAddress = InetAddress.getByName(ip);
+			socket = new Socket(ip, puerto);
 			estadoConectado = true;
 			
+			
+			//-----ANTERIOR LAB------
 			inFromServer = socket.getInputStream();
 			inFromServerLine = new BufferedReader(new InputStreamReader(inFromServer));
 			
