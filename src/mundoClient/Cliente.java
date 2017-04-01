@@ -21,17 +21,25 @@ public class Cliente extends Thread{
 	private Socket socket;
 	
 	private boolean estadoConectado;
-	private String tituloAPedir;
 	private boolean inicioDescarga;
+	
+	private String ip;
+	private int puerto;
+	private int numObj;
+	private Objeto[] objetos;
 	
 	@SuppressWarnings("unused")
 	private InterfazCliente interfaz;
-	public Cliente(InterfazCliente interfazC)
+	public Cliente(String dirIP, String iPuerto, String iNumObj)
 	{
-		interfaz = interfazC;
 		estadoConectado=false;
-		tituloAPedir =null;
 		inicioDescarga = false;
+		
+		ip = dirIP;
+		puerto = Integer.parseInt(iPuerto);
+		numObj = Integer.parseInt(iNumObj);
+		
+		objetos= new Objeto[numObj];
 	}
 	
 	/**
@@ -96,15 +104,11 @@ public class Cliente extends Thread{
 	
 	
 	public void run(){
-		if(tituloAPedir != null && socket != null)
-		{
+		//if(tituloAPedir != null && socket != null)
+		//{
 			pedirArchivo();
-		}
+		//}
 	}
-    public void tituloAPedir(String titulo)
-    {
-    	tituloAPedir = titulo;
-    }
 	
 	/**
 	 * Le llega un título por parámetro, lo recupera y lo guarda en ./descargas
@@ -121,9 +125,9 @@ public class Cliente extends Thread{
     		{
     			return "error de conexion";
     		}
-            outToServer.println(tituloAPedir);
-            System.out.println("va a pedir "+tituloAPedir);
-            file = new File("./descargas/"+tituloAPedir);
+            //outToServer.println(tituloAPedir);
+            //System.out.println("va a pedir "+tituloAPedir);
+            //file = new File("./descargas/"+tituloAPedir);
             // Get the size of the file
             
             fos = new FileOutputStream(file);
@@ -150,8 +154,8 @@ public class Cliente extends Thread{
 
         	long duration = (endTime - startTime)/1000;
         	
-            System.out.println("File " + tituloAPedir
-                + " downloaded (" + current + " bytes read)");
+            //System.out.println("File " + tituloAPedir
+              //  + " downloaded (" + current + " bytes read)");
             System.out.println("\n en la <rutadelrepo>/descargas se encuentra el archivo descargado");
             
             System.out.println("\n se demoro "+duration +" segundos \n");

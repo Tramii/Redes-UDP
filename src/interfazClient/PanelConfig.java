@@ -32,15 +32,10 @@ public class PanelConfig extends JPanel{
 		setLayout(new GridLayout(3,2));
 		
 		lbIP = new JLabel("Dirección IP: ");
-		
 		lbPuerto = new JLabel("Puerto: ");
-		
 		lbNumObj = new JLabel("Número de objetos a enviar: ");
-		
 		txtIP = new JTextField();
-		
 		txtPuerto = new JTextField();
-		
 		txtNumObj = new JTextField();
 		
 		add(lbIP);
@@ -52,7 +47,19 @@ public class PanelConfig extends JPanel{
 		
 	}
 	
+	public String darIP(){
+		String ip = txtIP.getText();
+		return ip;
+	}
 	
+	public String darPuerto(){
+		String port = txtPuerto.getText();
+		return port;
+	}
 	
+	public String darNumObjetos(){
+		String numObj = txtNumObj.getText();
+		return numObj;
+	}
 
 }

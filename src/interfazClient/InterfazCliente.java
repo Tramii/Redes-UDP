@@ -61,7 +61,6 @@ public class InterfazCliente extends JFrame{
 		add( panelConfig, BorderLayout.CENTER );
 		add( panelBotones, BorderLayout.SOUTH );
 		
-		cliente = new Cliente(this);
 	}
 
 	//-----------------------------------------------------------------
@@ -69,15 +68,20 @@ public class InterfazCliente extends JFrame{
 	//-----------------------------------------------------------------
 	public void startConn()
 	{
-		JOptionPane.showMessageDialog(null, "Iniciando conexión");
-		cliente = new Cliente(this);
-		cliente.iniciarConexion();
-		JOptionPane.showMessageDialog(null, "Se ha establecido conexión");
-	}
-	
-	public void cerrarConexion(){
-		cliente.cerrarConexion();
-		JOptionPane.showMessageDialog(null, "Ha cerrado la conexión");
+		
+		String ip = panelConfig.darIP();
+		String puerto = panelConfig.darPuerto();
+		String numObj = panelConfig.darNumObjetos();
+		
+		if (ip.equals("") || puerto.equals("") || numObj.equals(""))
+			JOptionPane.showMessageDialog(this, "Debe llenar todos los campos", "Error", JOptionPane.ERROR_MESSAGE);
+		else{
+			
+			cliente = new Cliente(ip, puerto, numObj);
+			
+			cliente.iniciarConexion();
+			JOptionPane.showMessageDialog(null, "Se ha iniciado el envío de objetos");
+		}		
 	}
 	
 	public Cliente darCliente(){
