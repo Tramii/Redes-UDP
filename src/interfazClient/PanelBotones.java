@@ -11,27 +11,14 @@ import javax.swing.border.TitledBorder;
 @SuppressWarnings("serial")
 public class PanelBotones extends JPanel implements ActionListener{
 	
-	private final static String INICIAR = "Iniciar conexión";
-	private final static String CERRAR = "Cerrar conexión";
-	private final static String DESCARGAR = "Descargar archivo";
-	private final static String DETENER = "Detener descarga";
-	private final static String VER = "Ver descargas";
+	private final static String START = "Iniciar envío";
+	private final static String OTHER = "Otro botón";
 
 	private InterfazCliente principal;
+		
+	private JButton btSTART;
 	
-	private JPanel subpanel1;
-	
-	private JPanel subpanel2;
-	
-	private JButton btIniciar;
-	
-	private JButton btCerrar;
-	
-	private JButton btDescargar;
-	
-	private JButton btDetener;
-	
-	private JButton btVer;
+	private JButton btOTHER;
 	
 	public PanelBotones(InterfazCliente interfaz){
 		
@@ -39,47 +26,19 @@ public class PanelBotones extends JPanel implements ActionListener{
 		
 		setLayout(new GridLayout(2,1));		
 		setBorder(new TitledBorder("Botoncitos"));
+				
+		btSTART = new JButton();
+		btSTART.setText(START);
+		btSTART.setActionCommand(START);
+		btSTART.addActionListener(this);
 		
-		subpanel1 = new JPanel();
-		subpanel1.setLayout(new GridLayout(1, 2));
+		btOTHER = new JButton();
+		btOTHER.setText(OTHER);
+		btOTHER.setActionCommand(OTHER);
+		btOTHER.addActionListener(this);
 		
-		subpanel2 = new JPanel();
-		subpanel2.setLayout(new GridLayout(1, 3));
-		
-		btIniciar = new JButton();
-		btIniciar.setText(INICIAR);
-		btIniciar.setActionCommand(INICIAR);
-		btIniciar.addActionListener(this);
-		
-		btCerrar = new JButton();
-		btCerrar.setText(CERRAR);
-		btCerrar.setActionCommand(CERRAR);
-		btCerrar.addActionListener(this);
-		
-		btDescargar = new JButton();
-		btDescargar.setText(DESCARGAR);
-		btDescargar.setActionCommand(DESCARGAR);
-		btDescargar.addActionListener(this);
-		
-		btDetener = new JButton();
-		btDetener.setText(DETENER);
-		btDetener.setActionCommand(DETENER);
-		btDetener.addActionListener(this);
-		
-		btVer = new JButton();
-		btVer.setText(VER);
-		btVer.setActionCommand(VER);
-		btVer.addActionListener(this);
-		
-		add(subpanel1);
-		add(subpanel2);
-		
-		subpanel1.add(btIniciar);
-		subpanel1.add(btCerrar);
-		
-		subpanel2.add(btDescargar);
-		subpanel2.add(btDetener);
-		subpanel2.add(btVer);
+		add(btSTART);
+		add(btOTHER);
 	}
 
 	@Override
@@ -87,25 +46,14 @@ public class PanelBotones extends JPanel implements ActionListener{
 		
 		String comando = e.getActionCommand();
 		
-		if(comando.equals(INICIAR)){
-			principal.iniciarConexion();
+		if(comando.equals(START)){
+			principal.startConn();
 		}
 		
-		else if (comando.equals(CERRAR)){
-			principal.cerrarConexion();
-		}
 		
-		else if (comando.equals(DESCARGAR)){
-			principal.descargar();
-		}	
-				
-		else if(comando.equals(DETENER)){
-			principal.detener();
-		}
-		
-		else if (comando.equals(VER)){
-			principal.verDescargas();
-		}
+//		else if (comando.equals(OTHER)){
+//			
+//		}
 		
 	}
 
