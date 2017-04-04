@@ -1,13 +1,19 @@
 package mundoClient;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Objeto {
+public class Objeto implements Serializable{
 	
 	//--------------------------------------------------------------------------------------
 	//VARIABLES
 	//--------------------------------------------------------------------------------------	
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Valor numérico entero que identifica la posición del objeto 
 	 */

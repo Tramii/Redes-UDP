@@ -66,6 +66,8 @@ public class Cliente {
         		out.writeObject(objetos[i]);
         		
         		byte [] sendData = bos.toByteArray();
+        		
+        		
         		DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, puerto);
         		clientSocket.send(sendPacket);
         		System.out.println("manda datagrama "+i);

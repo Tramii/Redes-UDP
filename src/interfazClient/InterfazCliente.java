@@ -83,13 +83,12 @@ public class InterfazCliente extends JFrame{
 			int numObjI =0;
 			try{
 				puertoI = Integer.parseInt(puerto);
-				numObjI = Integer.parseInt(puerto);
+				numObjI = Integer.parseInt(numObj);
 			}
 			catch(Exception e){
 				JOptionPane.showMessageDialog(this, "Debe ingresar numeros", "Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			
 			
 			
 			cliente = new Cliente(ip, puertoI, numObjI);
