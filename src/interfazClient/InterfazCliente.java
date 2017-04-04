@@ -3,6 +3,7 @@ package interfazClient;
 import java.awt.BorderLayout;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import mundoClient.Cliente;
 
@@ -22,7 +23,7 @@ public class InterfazCliente extends JFrame{
 	/**
      * Panel para desplegar estado de la conexion
      */
-	private PanelEstadoConexion panelEstado;
+	//private PanelEstadoConexion panelEstado;
 	
 	/**
      * Panel para desplegar botones
@@ -52,12 +53,13 @@ public class InterfazCliente extends JFrame{
         setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
         
         //Incializo panel
-		panelEstado = new PanelEstadoConexion(this);
+		//panelEstado = new PanelEstadoConexion(this);
 		panelBotones= new PanelBotones(this);
 		panelConfig = new PanelConfig(this);
 		
 		//Agrego a la interfaz
-		add( panelEstado, BorderLayout.NORTH );
+		//add( panelEstado, BorderLayout.NORTH );
+		add( new JPanel(), BorderLayout.NORTH );
 		add( panelConfig, BorderLayout.CENTER );
 		add( panelBotones, BorderLayout.SOUTH );
 		
@@ -77,10 +79,33 @@ public class InterfazCliente extends JFrame{
 			JOptionPane.showMessageDialog(this, "Debe llenar todos los campos", "Error", JOptionPane.ERROR_MESSAGE);
 		else{
 			
-			cliente = new Cliente(ip, puerto, numObj);
+			int puertoI = 0;
+			int numObjI =0;
+			try{
+				puertoI = Integer.parseInt(puerto);
+				numObjI = Integer.parseInt(puerto);
+			}
+			catch(Exception e){
+				JOptionPane.showMessageDialog(this, "Debe ingresar numeros", "Error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			
+			
+			cliente = new Cliente(ip, puertoI, numObjI);
 			
 			cliente.iniciarConexion();
-			JOptionPane.showMessageDialog(null, "Se ha iniciado el envío de objetos");
+			
+			boolean error = cliente.darErrores();
+			
+			if(error)
+			{
+				JOptionPane.showMessageDialog(null, "Error, host o puerto incorrectos");
+			}
+			else{
+				JOptionPane.showMessageDialog(null, "Ya termino de mandar los objetos");
+			}
+			
 		}		
 	}
 	

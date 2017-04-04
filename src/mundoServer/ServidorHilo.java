@@ -19,7 +19,7 @@ public class ServidorHilo extends Thread {
 	private DataOutputStream outputData;
 	
 	 
-	private Files files;
+	//private Files files;
 	private int id;
 	
 	
@@ -36,7 +36,7 @@ public class ServidorHilo extends Thread {
 		output = client.getOutputStream();
 		outputData = new DataOutputStream(output);
 		
-		files = new Files();
+		//files = new Files();
 		
 	}
 	
@@ -57,11 +57,11 @@ public class ServidorHilo extends Thread {
 			// si se cambia este time out hay que cambiar tambien el del cliente
 			cliente.setSoTimeout(1000*60*1);
 			
-			outToClient.println("HI "+files.darListaTitulos());
-			System.out.println("envia inicio de conversacion "+"HI "+files.darListaTitulos());
+			outToClient.println("HI ");//+files.darListaTitulos());
+			System.out.println("envia inicio de conversacion "+"HI ");//+files.darListaTitulos());
 			String in = inFromClient.readLine();
 			System.out.println("El cliente quiere "+in);
-			File file = files.returnFile(in);
+			File file =null;// = files.returnFile(in);
 			
 			if(file == null)
 			{

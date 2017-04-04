@@ -1,191 +1,99 @@
 package mundoClient;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
+import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Date;
 
 import interfazClient.InterfazCliente;
 
-public class Cliente extends Thread{
-	
-	private InputStream inFromServer;
-	private BufferedReader inFromServerLine;
-	private PrintWriter outToServer;
-	private String archivosDisponibles;
-	private FileOutputStream fos;
-	private Socket socket;
-	
-	private boolean estadoConectado;
-	private boolean inicioDescarga;
+public class Cliente {
+
+	private DatagramSocket clientSocket;
 	
 	private String ip;
 	private int puerto;
 	private int numObj;
 	private Objeto[] objetos;
+	private boolean error;
 	
 	@SuppressWarnings("unused")
 	private InterfazCliente interfaz;
-	public Cliente(String dirIP, String iPuerto, String iNumObj)
+	public Cliente(String dirIP, int iPuerto, int iNumObj)
 	{
-		estadoConectado=false;
-		inicioDescarga = false;
+		error=false;
 		
 		ip = dirIP;
-		puerto = Integer.parseInt(iPuerto);
-		numObj = Integer.parseInt(iNumObj);
+		puerto = (iPuerto);
+		numObj = (iNumObj);
 		
 		objetos= new Objeto[numObj];
 	}
 	
 	/**
-	 * queda la conexion ABIERTA si todo sale bien.
-	 * Si no se hace una peticion pronto, el servidor desconecta por time out
 	 * 
-	 * SE CUENTAN CON 2 MINUTOS ANTES DEL TIME OUT! SE DEBE LLAMAR A 
-	 * PEDIR ARCHIVO ANTES DE 1 MINUTO
-	 * 
-	 * return los files disponibles en el server
+	 * crea el client socket que es un Datagram socket UDP
 	 */
-	public String iniciarConexion(){
+	public void iniciarConexion(){
         
 
         try {
         	
         	System.out.println("Creando socket en "+ip  );
         	
-        	DatagramSocket clientSocket = new DatagramSocket();
+        	clientSocket = new DatagramSocket();
         	InetAddress IPAddress = InetAddress.getByName(ip);
-			socket = new Socket(ip, puerto);
-			estadoConectado = true;
 			
-			
-			//-----ANTERIOR LAB------
-			inFromServer = socket.getInputStream();
-			inFromServerLine = new BufferedReader(new InputStreamReader(inFromServer));
-			
-			outToServer = new PrintWriter(socket.getOutputStream(), true);
-			
-			outToServer.println("hola!");
-			
-			System.out.println("Envía saludo");
-			System.out.println("Espera respuesta del servidor");
-			
-			String inicia = inFromServerLine.readLine();
-			if(!inicia.startsWith("HI"))
-			{
-				//bad request
-				throw new Exception(" no respondio con HI y lista de files");
-			}
-			else
-			{
-				archivosDisponibles = inicia.replace("HI ","");
-				System.out.println(archivosDisponibles);
-				
-			//NO cierra el socket!! no lo cierra porque todavia falta pedir las cosas!!
-				VerificadorTimeOut verificador = new VerificadorTimeOut(this);
-				verificador.start();
-				return archivosDisponibles;
-			}
-			
+             
+        	 for(int i=0; i< objetos.length;i++)
+        	 {
+        		objetos[i] = new Objeto(i, new Date()); 
+        		
+        		//convierte el objeto a object
+        		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        		ObjectOutput out =new ObjectOutputStream(bos);   
+        		out.writeObject(objetos[i]);
+        		
+        		byte [] sendData = bos.toByteArray();
+        		DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, puerto);
+        		clientSocket.send(sendPacket);
+        		System.out.println("manda datagrama "+i);
+        	 }
+             /**   SOLO EN CASO DE QUE SE QUIERA QUE EL SERVIDOR RESPONDA
+             DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+             clientSocket.receive(receivePacket);
+             String modifiedSentence = new String(receivePacket.getData());*/
+             System.out.println("\n Ya mando todos los datagramas");
+             
+             cerrarConexion();
 			
 		} catch (Exception e) {
+			error =true;
 			e.printStackTrace();
         	try {
-				socket.close();
-			} catch (IOException f) {
+        		clientSocket.close();
+			} catch (Exception f) {
 				f.printStackTrace();
 			}
-        	estadoConectado = false;
 		} 
-        return archivosDisponibles;
 	}
 	
-	
-	
-	public void run(){
-		//if(tituloAPedir != null && socket != null)
-		//{
-			pedirArchivo();
-		//}
-	}
-	
-	/**
-	 * Le llega un título por parámetro, lo recupera y lo guarda en ./descargas
-	 * @param titulo
-	 * @throws Exception
-	 */
-    public String pedirArchivo() {
-    	inicioDescarga = true;
-    	File file = null;
-    	long startTime = System.currentTimeMillis();
-    	
-    	try{
-    		if(socket == null )
-    		{
-    			return "error de conexion";
-    		}
-            //outToServer.println(tituloAPedir);
-            //System.out.println("va a pedir "+tituloAPedir);
-            //file = new File("./descargas/"+tituloAPedir);
-            // Get the size of the file
-            
-            fos = new FileOutputStream(file);
-            
-            
-            byte [] bytes  = new byte [1024*16];
-            String tamanoEnMB = inFromServerLine.readLine();
-            System.out.println("\n ya va a recibir el archivo que pesa "+tamanoEnMB);
-            //int bytesRead = 0;
-            int current = 0;
-            int i=0;
-            int count;
-            while ((count = inFromServer.read(bytes)) > 0) {
-                fos.write(bytes, 0, count);
-                i++;
-                current+=count;
-                System.out.println("Llego paquete. Escribiendo en el archivo el mensaje numero "+i);
-                System.out.println("Descargado hasta el momento: "+current + "");
-                //descomentar la linea de abajo para ver el contenido del paquete
-                //System.out.println("contenido del paquete "+ " "+new String(bytes));
-            }
 
-            long endTime = System.currentTimeMillis();
-
-        	long duration = (endTime - startTime)/1000;
-        	
-            //System.out.println("File " + tituloAPedir
-              //  + " downloaded (" + current + " bytes read)");
-            System.out.println("\n en la <rutadelrepo>/descargas se encuentra el archivo descargado");
-            
-            System.out.println("\n se demoro "+duration +" segundos \n");
-            
-    	}
-    	 catch (Exception e) {
- 			e.printStackTrace();
-         	cerrarConexion();
-         	//borra el file
-         	if(file != null)
-         	{
-         		file.delete();         		
-         	}
-         	
-         	return "Se termino abruptamente la descarga ";
- 		} 
-    	cerrarConexion();
-    	inicioDescarga = false;
-        return "El archivo fue correctamente descargado en la carpeta ./descargas";
-    }
-    
+	
     
 	/**
-	 * Cierra conexión TCP
+	 * Cierra conexión udp
 	 * @throws Exception
 	 */
 
@@ -194,31 +102,20 @@ public class Cliente extends Thread{
     	 * siempre que termina de descargar algo, cierra conexion
     	 */
         try {
-        	estadoConectado = false;
-        	if(socket != null)
+        	if(clientSocket != null)
         	{
-        		socket.close();
-    			socket = null;
+        		clientSocket.close();
+        		clientSocket = null;
         	}
 			
-		} catch (IOException e) {
-			System.out.println("Se ha detenido la descarga. No se podrá abrir el archivo.");
+		} catch (Exception e) {
+			System.out.println(" se cierra clientSocket");
 		}
     	
     }
-
     
-    public void detenerDescarga(){
-    	cerrarConexion();
-    }
-    
-    
-    public boolean darEstadoConexion(){
-    	return estadoConectado;
-    }
-    
-    public boolean inicioDescargaDocumento(){
-    	return inicioDescarga;
+    public boolean darErrores(){
+    	return error;
     }
     
 
