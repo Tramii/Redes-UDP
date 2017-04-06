@@ -12,6 +12,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.Date;
 
 import mundoClient.Objeto;
@@ -20,7 +21,14 @@ public class Servidor {
 
     public static void main(String[] args) {
         int port = args.length == 0 ? 57 : Integer.parseInt(args[0]);
-        new Servidor().run(port);
+        Servidor server = new Servidor();
+        server.run(port);
+    }
+    
+    private ArrayList clientes;
+    
+    public Servidor(){
+    	clientes = new ArrayList();
     }
 
     public void run(int port) {    
@@ -32,7 +40,8 @@ public class Servidor {
                 InetAddress.getLocalHost().getHostAddress(), port);     
         DatagramPacket receivePacket = new DatagramPacket(receiveData,
                            receiveData.length);
-
+        
+        
         while(true)
         {
               serverSocket.receive(receivePacket);
@@ -42,6 +51,11 @@ public class Servidor {
               //llega esto -> 192.168.56.1:63365
               String complete = receivePacket.getSocketAddress() +"";
               String cliente = complete.split(":")[0];
+              
+              if(!clientes.contains(cliente)){
+            	  clientes.add(cliente);
+              }
+              
               System.out.println(cliente);
               System.out.println("RECEIVED: " +objectoEntrante.getPos()+"-"+ objectoEntrante.getTimestamp());
               
