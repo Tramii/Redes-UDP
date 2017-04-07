@@ -57,14 +57,7 @@ public class Servidor {
               
               //guarda el record del mensaje
               manejadorMensajes.procesarMensaje(cliente, objectoEntrante);
-              //escribe en el file el numero del mensaje y el tiempo
-              File log = new File("./data/"+cliente+".txt");
-              PrintWriter out = new PrintWriter(new FileWriter(log, true));
               
-              out.write(objectoEntrante.getPos()+": "+(System.currentTimeMillis() -objectoEntrante.getTimestamp().getTime())+ "\n  ");
-              out.flush();
-              out.close();
-        
         }
       } catch (Exception e) {
               System.out.println(e);
