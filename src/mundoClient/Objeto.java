@@ -24,16 +24,16 @@ public class Objeto implements Serializable{
 	 */
 	private Date timestamp;
 	
-	private boolean esFinal;
+	private long deTotal;
 	
 	//--------------------------------------------------------------------------------------
 	//MÉTODOS
 	//--------------------------------------------------------------------------------------
 	
-	public Objeto(long iPos, Date iTimestamp, boolean esFin){
+	public Objeto(long iPos, long deTota, Date iTimestamp){
 		pos = iPos;
 		timestamp = iTimestamp;
-		esFinal = esFin;
+		deTotal = deTota;
 	}
 	
 	public void setPos(int iPos){
@@ -52,8 +52,8 @@ public class Objeto implements Serializable{
 		return timestamp;
 	}
 	
-	public boolean esElFinal(){
-		return esFinal;
+	public long darTotal(){
+		return deTotal;
 	}
 
 }
