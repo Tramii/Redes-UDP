@@ -56,14 +56,24 @@ public class Cliente {
         	InetAddress IPAddress = InetAddress.getByName(ip);
 			
              
-        	 for(int i=0; i< objetos.length;i++)
+        	 for(int i=0; i< objetos.length +1;i++)
         	 {
-        		objetos[i] = new Objeto(i, new Date()); 
-        		
+        		 //si ya envio el ultimo (length-1) ahora envio confirmacion de que termino
+        		 Objeto aMandar =null;
+        		 if(i== objetos.length){
+        			 
+        			 long total = (objetos.length-1)*(objetos.length-1+1)/2; //la suma de los pos de todos los que envio
+        			 aMandar = new Objeto(-total, new Date(), true); 
+        		 }
+        		 else{
+        			 objetos[i] = new Objeto(i, new Date(), false); 
+        			 aMandar = objetos[i];
+        		 }
+        			 
         		//convierte el objeto a object
         		ByteArrayOutputStream bos = new ByteArrayOutputStream();
         		ObjectOutput out =new ObjectOutputStream(bos);   
-        		out.writeObject(objetos[i]);
+        		out.writeObject(aMandar);
         		
         		byte [] sendData = bos.toByteArray();
         		
@@ -72,6 +82,8 @@ public class Cliente {
         		clientSocket.send(sendPacket);
         		System.out.println("manda datagrama "+i);
         	 }
+        	 
+        	 
              /**   SOLO EN CASO DE QUE SE QUIERA QUE EL SERVIDOR RESPONDA
              DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
              clientSocket.receive(receivePacket);

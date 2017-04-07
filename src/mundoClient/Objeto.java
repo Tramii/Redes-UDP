@@ -17,27 +17,30 @@ public class Objeto implements Serializable{
 	/**
 	 * Valor numérico entero que identifica la posición del objeto 
 	 */
-	private int pos;
+	private long pos;
 	
 	/**
 	 * Marca de tiempo asociada al momento en el que es enviado el objeto
 	 */
 	private Date timestamp;
 	
+	private boolean esFinal;
+	
 	//--------------------------------------------------------------------------------------
 	//MÉTODOS
 	//--------------------------------------------------------------------------------------
 	
-	public Objeto(int iPos, Date iTimestamp){
+	public Objeto(long iPos, Date iTimestamp, boolean esFin){
 		pos = iPos;
 		timestamp = iTimestamp;
+		esFinal = esFin;
 	}
 	
 	public void setPos(int iPos){
 		pos = iPos;
 	}
 	
-	public int getPos(){
+	public long getPos(){
 		return pos;
 	}
 	
@@ -49,5 +52,8 @@ public class Objeto implements Serializable{
 		return timestamp;
 	}
 	
+	public boolean esElFinal(){
+		return esFinal;
+	}
 
 }

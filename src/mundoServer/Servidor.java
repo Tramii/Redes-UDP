@@ -25,10 +25,13 @@ public class Servidor {
         server.run(port);
     }
     
-    private ArrayList clientes;
+    
+    private ManejadorConteoMensajes manejadorMensajes;
     
     public Servidor(){
-    	clientes = new ArrayList();
+    	
+    	manejadorMensajes = new ManejadorConteoMensajes();
+    	manejadorMensajes.start();
     }
 
     public void run(int port) {    
@@ -52,13 +55,9 @@ public class Servidor {
               String complete = receivePacket.getSocketAddress() +"";
               String cliente = complete.split(":")[0];
               
-              if(!clientes.contains(cliente)){
-            	  clientes.add(cliente);
-              }
-              
-              System.out.println(cliente);
-              System.out.println("RECEIVED: " +objectoEntrante.getPos()+"-"+ objectoEntrante.getTimestamp());
-              
+              //guarda el record del mensaje
+              manejadorMensajes.procesarMensaje(cliente, objectoEntrante);
+              //escribe en el file el numero del mensaje y el tiempo
               File log = new File("./data/"+cliente+".txt");
               PrintWriter out = new PrintWriter(new FileWriter(log, true));
               
