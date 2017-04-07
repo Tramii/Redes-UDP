@@ -55,21 +55,14 @@ public class Cliente {
         	clientSocket = new DatagramSocket();
         	InetAddress IPAddress = InetAddress.getByName(ip);
 			
-             
-        	 for(int i=0; i< objetos.length +1;i++)
+             //manda objetos de inicio y fin
+        	 for(int i=0; i< objetos.length ;i++)
         	 {
-        		 //si ya envio el ultimo (length-1) ahora envio confirmacion de que termino
         		 Objeto aMandar =null;
-        		 if(i== objetos.length){
-        			 
-        			 long total = (objetos.length-1)*(objetos.length-1+1)/2; //la suma de los pos de todos los que envio
-        			 aMandar = new Objeto(-total, new Date(), true); 
-        		 }
-        		 else{
-        			 objetos[i] = new Objeto(i, new Date(), false); 
-        			 aMandar = objetos[i];
-        		 }
-        			 
+        		 objetos[i] = new Objeto(i+1,  new Long(objetos.length),new Date()); 
+        		 aMandar = objetos[i];
+        	
+        			
         		//convierte el objeto a object
         		ByteArrayOutputStream bos = new ByteArrayOutputStream();
         		ObjectOutput out =new ObjectOutputStream(bos);   
