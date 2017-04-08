@@ -4,17 +4,20 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Date;
 
 import mundoClient.Objeto;
 
 public class ManejadorConteoMensajes extends Thread {
 	
 	private ArrayList <Long> cuantosMensajesPorCliente;
+	private ArrayList <Long> tiempoPromedioPorCliente;
 	private ArrayList clientes;
 	private ArrayList mensajes;
 	
 	public ManejadorConteoMensajes(){
 		cuantosMensajesPorCliente = new ArrayList<Long>();
+		tiempoPromedioPorCliente = new ArrayList<Long>();
 		clientes = new ArrayList();
 		mensajes = new ArrayList();
 	}
@@ -50,6 +53,7 @@ public class ManejadorConteoMensajes extends Thread {
 			
 			//faltan por mandar objeto.getPos()
 			cuantosMensajesPorCliente.add(i,-objeto.darTotal());
+			tiempoPromedioPorCliente.add(i, msg.tiempoTravesia);
 		}
 		
 		//por cada mensaje estoy añandiendo en la lista de mensajes +1.
@@ -61,7 +65,10 @@ public class ManejadorConteoMensajes extends Thread {
 		
 		System.out.println("\n El cliente "+ cliente +" paquetes que faltan "+(-cuantosMensajesPorCliente.get(i)));
 		//los que llegaron son el total - los que faltan
-		System.out.println("\n El cliente "+ cliente +" paquetes que llegaron "+(objeto.darTotal()+cuantosMensajesPorCliente.get(i)));
+		System.out.println(" paquetes que llegaron "+(objeto.darTotal()+cuantosMensajesPorCliente.get(i)));
+		
+		//tiempo promedio = tiempo de los que han (llegado*tiempoPromedio + tiempoEste)/
+		System.out.println(" tiempo promedio "+(objeto.darTotal()+cuantosMensajesPorCliente.get(i)));
 		
 		if(cuantosMensajesPorCliente.get(i) == 0){
 			System.out.println("\n El cliente "+ cliente +" NO PERDIO ningun paquete");
@@ -73,12 +80,12 @@ public class ManejadorConteoMensajes extends Thread {
 		} catch (Exception e) {e.printStackTrace();}
 	}
 	
-	public void procesarMensaje(String cliente, Objeto objetoEntrante){
+	public void procesarMensaje(String cliente, Objeto objetoEntrante, Date fechaLlegada){
 		System.out.println(cliente);
         System.out.println("RECEIVED: " +objetoEntrante.getPos()+"-"+ objetoEntrante.getTimestamp());
         
         synchronized (mensajes){
-        	mensajes.add(new Mensaje(cliente,objetoEntrante));        	
+        	mensajes.add(new Mensaje(cliente,objetoEntrante,fechaLlegada));        	
         }
 	}
 	
@@ -104,9 +111,11 @@ public class ManejadorConteoMensajes extends Thread {
 	public class Mensaje{
 		private String clie;
 		private Objeto obje;
-		public Mensaje(String cli, Objeto obj){
+		private Long tiempoTravesia;
+		public Mensaje(String cli, Objeto obj, Date fechaLlegada){
 			obje= obj;
 			clie=cli;
+			tiempoTravesia = fechaLlegada.getTime() - obj.getTimestamp().getTime();
 		}
 	}
 }
