@@ -67,8 +67,11 @@ public class ManejadorConteoMensajes extends Thread {
 		//los que llegaron son el total - los que faltan
 		System.out.println(" paquetes que llegaron "+(objeto.darTotal()+cuantosMensajesPorCliente.get(i)));
 		
-		//tiempo promedio = tiempo de los que han (llegado*tiempoPromedio + tiempoEste)/
-		System.out.println(" tiempo promedio "+(objeto.darTotal()+cuantosMensajesPorCliente.get(i)));
+		//tiempo promedio = tiempo de los que han (losQueHanLlegado*tiempoPromedio + tiempoEste)/
+		long tiempoPromedio =((tiempoPromedioPorCliente.get(i)*cuantosMensajesPorCliente.get(i)+msg.tiempoTravesia)/(cuantosMensajesPorCliente.get(i)+1));
+		System.out.println(" tiempo promedio "+(tiempoPromedio));
+		tiempoPromedioPorCliente.add(i, tiempoPromedio);
+		
 		
 		if(cuantosMensajesPorCliente.get(i) == 0){
 			System.out.println("\n El cliente "+ cliente +" NO PERDIO ningun paquete");
@@ -76,7 +79,7 @@ public class ManejadorConteoMensajes extends Thread {
 		
 		try {
 			//perdidas son los que faltaron
-			escribirArchivo(msg, -cuantosMensajesPorCliente.get(i)+"" , "tiempo");
+			escribirArchivo(msg, -cuantosMensajesPorCliente.get(i)+"" , ""+tiempoPromedio);
 		} catch (Exception e) {e.printStackTrace();}
 	}
 	
