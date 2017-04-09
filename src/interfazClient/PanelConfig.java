@@ -35,8 +35,11 @@ public class PanelConfig extends JPanel{
 		lbPuerto = new JLabel("Puerto: ");
 		lbNumObj = new JLabel("Número de objetos a enviar: ");
 		txtIP = new JTextField();
+		txtIP.setText("192.168.56.1");
 		txtPuerto = new JTextField();
+		txtPuerto.setText("57");
 		txtNumObj = new JTextField();
+		txtNumObj.setText("100");
 		
 		add(lbIP);
 		add(txtIP);
