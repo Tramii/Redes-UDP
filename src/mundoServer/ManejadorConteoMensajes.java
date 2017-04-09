@@ -73,7 +73,7 @@ public class ManejadorConteoMensajes extends Thread {
 		sumaTiemposPorCliente.add(i, sumaTiemposPorCliente.get(i)+tiempoTravesia);
 		
 		long tiempoPromedio = sumaTiemposPorCliente.get(i)/cuantosLlegaron;
-		System.out.println("tiempo promedio: "+ tiempoPromedio+"   tiempo travesia este paquete: "+tiempoTravesia);
+		System.out.println("tiempo promedio: "+ tiempoPromedio+"   tiempo paquete actual: "+tiempoTravesia);
 		
 		if(cuantosMensajesPorCliente.get(i) == 0){
 			System.out.println("\n El cliente "+ cliente +" NO PERDIO ningun paquete");
