@@ -19,7 +19,7 @@ public class ManejadorConteoMensajes extends Thread {
 		cuantosMensajesPorCliente = new ArrayList<Long>();
 		sumaTiemposPorCliente = new ArrayList<Long>();
 		clientes = new ArrayList();
-		mensajes = new ArrayList();
+		mensajes = new ArrayList(100000);
 	}
 	
 	public void run(){
