@@ -53,10 +53,10 @@ public class Servidor {
               Objeto objectoEntrante= (Objeto)deserialize(receivePacket.getData());
               //llega esto -> 192.168.56.1:63365
               String complete = receivePacket.getSocketAddress() +"";
-              String cliente = complete.split(":")[0];
-              
+              String cliente = complete.split(":")[0] +"-" +complete.split(":")[1];
+              Date fechaLlegada = new Date();
               //guarda el record del mensaje
-              manejadorMensajes.procesarMensaje(cliente, objectoEntrante);
+              manejadorMensajes.procesarMensaje(cliente, objectoEntrante, fechaLlegada);
               
         }
       } catch (Exception e) {
