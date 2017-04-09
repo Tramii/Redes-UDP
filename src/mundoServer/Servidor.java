@@ -48,8 +48,7 @@ public class Servidor {
         while(true)
         {
               serverSocket.receive(receivePacket);
-              String sentence = new String( receivePacket.getData(), 0,
-                                 receivePacket.getLength() );
+              //String sentence = new String( receivePacket.getData(), 0,receivePacket.getLength() );
               Objeto objectoEntrante= (Objeto)deserialize(receivePacket.getData());
               //llega esto -> 192.168.56.1:63365
               String complete = receivePacket.getSocketAddress() +"";
