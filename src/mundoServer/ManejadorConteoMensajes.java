@@ -11,13 +11,13 @@ import mundoClient.Objeto;
 public class ManejadorConteoMensajes extends Thread {
 	
 	private ArrayList <Long> cuantosMensajesPorCliente;
-	private ArrayList <Long> tiempoPromedioPorCliente;
+	private ArrayList <Long> sumaTiemposPorCliente;
 	private ArrayList clientes;
 	private ArrayList mensajes;
 	
 	public ManejadorConteoMensajes(){
 		cuantosMensajesPorCliente = new ArrayList<Long>();
-		tiempoPromedioPorCliente = new ArrayList<Long>();
+		sumaTiemposPorCliente = new ArrayList<Long>();
 		clientes = new ArrayList();
 		mensajes = new ArrayList();
 	}
@@ -42,6 +42,8 @@ public class ManejadorConteoMensajes extends Thread {
 		String cliente = msg.clie;
 		Objeto objeto = msg.obje;
 		
+		long tiempoTravesia = msg.fechaArriboAlServidor.getTime() - objeto.getTimestamp().getTime();
+		
 		int i =clientes.lastIndexOf(cliente);
 		if(i==-1){
 			//nuevo cliente
@@ -49,11 +51,11 @@ public class ManejadorConteoMensajes extends Thread {
 			clientes.add(cliente);
 			
 			i= clientes.size()-1;//la pos de este cliente
-			System.out.println("crea cliente");
+			//system.out.println("crea cliente");
 			
 			//faltan por mandar objeto.getPos()
 			cuantosMensajesPorCliente.add(i,-objeto.darTotal());
-			tiempoPromedioPorCliente.add(i, msg.tiempoTravesia);
+			sumaTiemposPorCliente.add(i, tiempoTravesia);
 		}
 		
 		//por cada mensaje estoy añandiendo en la lista de mensajes +1.
@@ -63,15 +65,15 @@ public class ManejadorConteoMensajes extends Thread {
 		//mientras no sea 0, o se perdieron paquetes del cliente o no ha terminado de mandar
 		cuantosMensajesPorCliente.add(i, (cuantosMensajesPorCliente.get(i) + 1)  );
 		
-		System.out.println("\n El cliente "+ cliente +" paquetes que faltan "+(-cuantosMensajesPorCliente.get(i)));
+		System.out.println("\n El cliente "+ cliente +" paquetes que faltan: "+(-cuantosMensajesPorCliente.get(i)));
 		//los que llegaron son el total - los que faltan
-		System.out.println(" paquetes que llegaron "+(objeto.darTotal()+cuantosMensajesPorCliente.get(i)));
+		long cuantosLlegaron = objeto.darTotal()+cuantosMensajesPorCliente.get(i);
+		System.out.println(" paquetes que llegaron: "+cuantosLlegaron);
+		//tiempo promedio = tiempo de los que han llegado / el total
+		sumaTiemposPorCliente.add(i, sumaTiemposPorCliente.get(i)+tiempoTravesia);
 		
-		//tiempo promedio = tiempo de los que han (losQueHanLlegado*tiempoPromedio + tiempoEste)/
-		long tiempoPromedio =((tiempoPromedioPorCliente.get(i)*cuantosMensajesPorCliente.get(i)+msg.tiempoTravesia)/(cuantosMensajesPorCliente.get(i)+1));
-		System.out.println(" tiempo promedio "+(tiempoPromedio));
-		tiempoPromedioPorCliente.add(i, tiempoPromedio);
-		
+		long tiempoPromedio = sumaTiemposPorCliente.get(i)/cuantosLlegaron;
+		System.out.println("tiempo promedio: "+ tiempoPromedio+"   tiempo travesia este paquete: "+tiempoTravesia);
 		
 		if(cuantosMensajesPorCliente.get(i) == 0){
 			System.out.println("\n El cliente "+ cliente +" NO PERDIO ningun paquete");
@@ -79,20 +81,20 @@ public class ManejadorConteoMensajes extends Thread {
 		
 		try {
 			//perdidas son los que faltaron
-			escribirArchivo(msg, -cuantosMensajesPorCliente.get(i)+"" , ""+tiempoPromedio);
+			escribirArchivo(msg, -cuantosMensajesPorCliente.get(i)+"" , ""+tiempoPromedio, ""+tiempoTravesia);
 		} catch (Exception e) {e.printStackTrace();}
 	}
 	
 	public void procesarMensaje(String cliente, Objeto objetoEntrante, Date fechaLlegada){
-		System.out.println(cliente);
-        System.out.println("RECEIVED: " +objetoEntrante.getPos()+"-"+ objetoEntrante.getTimestamp());
+		//System.out.println(cliente);
+        //System.out.println("RECEIVED: " +objetoEntrante.getPos()+"-"+ objetoEntrante.getTimestamp());
         
         synchronized (mensajes){
         	mensajes.add(new Mensaje(cliente,objetoEntrante,fechaLlegada));        	
         }
 	}
 	
-	public void escribirArchivo(Mensaje msg, String perdidas, String tiempoPromedio) throws Exception{
+	public void escribirArchivo(Mensaje msg, String perdidas, String tiempoPromedio, String tiempoTravesia) throws Exception{
 		String cliente = msg.clie;
 		Objeto objetoEntrante = msg.obje;
 		
@@ -100,7 +102,7 @@ public class ManejadorConteoMensajes extends Thread {
         File log = new File("./data/"+cliente+".txt");
         PrintWriter out = new PrintWriter(new FileWriter(log, true));
         
-        out.write(objetoEntrante.getPos()+": "+(System.currentTimeMillis() -objetoEntrante.getTimestamp().getTime())+ "\n  ");
+        out.write(objetoEntrante.getPos()+": "+(tiempoTravesia )+ " ms \n  ");
         
         if(msg.obje.darTotal() == msg.obje.getPos()){
         	//es el ultimo mensaje
@@ -114,11 +116,12 @@ public class ManejadorConteoMensajes extends Thread {
 	public class Mensaje{
 		private String clie;
 		private Objeto obje;
-		private Long tiempoTravesia;
+		private Date fechaArriboAlServidor;
 		public Mensaje(String cli, Objeto obj, Date fechaLlegada){
 			obje= obj;
 			clie=cli;
-			tiempoTravesia = fechaLlegada.getTime() - obj.getTimestamp().getTime();
+			fechaArriboAlServidor = fechaLlegada;
+			//tiempoTravesia = fechaLlegada.getTime() - obj.getTimestamp().getTime();
 		}
 	}
 }
