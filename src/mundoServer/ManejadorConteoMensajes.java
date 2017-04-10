@@ -55,7 +55,7 @@ public class ManejadorConteoMensajes extends Thread {
 			
 			//faltan por mandar objeto.getPos()
 			cuantosMensajesPorCliente.add(i,-objeto.darTotal());
-			//sumaTiemposPorCliente.add(i, tiempoTravesia); se hace más adelante
+			sumaTiemposPorCliente.add(i, new Long(0));
 		}
 		
 		//por cada mensaje estoy añandiendo en la lista de mensajes +1.
