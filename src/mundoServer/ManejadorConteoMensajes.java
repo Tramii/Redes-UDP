@@ -39,46 +39,45 @@ public class ManejadorConteoMensajes extends Thread {
 		
 	}
 	public synchronized void procesarMensaje(Mensaje msg){
-		String cliente = msg.clie;
-		Objeto objeto = msg.obje;
-		
-		long tiempoTravesia = msg.fechaArriboAlServidor.getTime() - objeto.getTimestamp().getTime();
-		
-		int i =clientes.lastIndexOf(cliente);
-		if(i==-1){
-			//nuevo cliente
-			
-			clientes.add(cliente);
-			
-			i= clientes.size()-1;//la pos de este cliente
-			//system.out.println("crea cliente");
-			
-			//faltan por mandar objeto.getPos()
-			cuantosMensajesPorCliente.add(i,-objeto.darTotal());
-			sumaTiemposPorCliente.add(i, new Long(0));
-		}
-		
-		//por cada mensaje estoy añandiendo en la lista de mensajes +1.
-		//al llegar n mensajes, la lista del cliente va a contener el numero n
-		//pero la lista se inicializo en -TODOS los que iban a llegar que es -n
-		//entonces la lista comienza  en -100, y por cada uno que llega actualiza a -99.. -98.. hasta 0
-		cuantosMensajesPorCliente.add(i, (cuantosMensajesPorCliente.get(i) + 1)  );
-		
-		System.out.println("\n El cliente "+ cliente +" paquetes que faltan: "+(-cuantosMensajesPorCliente.get(i)));
-		//los que llegaron son el total - los que faltan
-		long cuantosLlegaron = objeto.darTotal()+cuantosMensajesPorCliente.get(i);
-		System.out.println(" paquetes que llegaron: "+cuantosLlegaron);
-		//tiempo promedio = tiempo de los que han llegado / el total
-		
-		sumaTiemposPorCliente.add(i, sumaTiemposPorCliente.get(i)+tiempoTravesia);
-		
-		long tiempoPromedio = sumaTiemposPorCliente.get(i)/cuantosLlegaron;
-		System.out.println("tiempo promedio: "+ tiempoPromedio+"   tiempo paquete actual: "+tiempoTravesia);
-		
-		if(cuantosMensajesPorCliente.get(i) == 0){
-			System.out.println("\n El cliente "+ cliente +" NO PERDIO ningun paquete");
-		}
-		
+ 		String cliente = msg.clie;
+ 		Objeto objeto = msg.obje;
+ 		
+ 		long tiempoTravesia = msg.fechaArriboAlServidor.getTime() - objeto.getTimestamp().getTime();
+ 		
+ 		int i =clientes.lastIndexOf(cliente);
+ 		if(i==-1){
+ 			//nuevo cliente
+ 			
+ 			clientes.add(cliente);
+ 			
+ 			i= clientes.size()-1;//la pos de este cliente
+ 			//system.out.println("crea cliente");
+ 			
+ 			//faltan por mandar objeto.getPos()
+ 			cuantosMensajesPorCliente.add(i,-objeto.darTotal());
+ 			sumaTiemposPorCliente.add(i, new Long(0));
+ 		}
+ 		
+ 		//por cada mensaje estoy añandiendo en la lista de mensajes +1.
+ 		//al llegar n mensajes, la lista del cliente va a contener el numero n
+ 		//pero cuando llegue el ultimo objeto de terminación, su pos será -n
+ 		//osea que cuantos mensajes por cliente debe ser 0 cuando todos los mensajes sean enviados
+ 		//mientras no sea 0, o se perdieron paquetes del cliente o no ha terminado de mandar
+ 		cuantosMensajesPorCliente.add(i, (cuantosMensajesPorCliente.get(i) + 1)  );
+ 		
+ 		System.out.println("\n El cliente "+ cliente +" paquetes que faltan: "+(-cuantosMensajesPorCliente.get(i)));
+ 		//los que llegaron son el total - los que faltan
+ 		long cuantosLlegaron = objeto.darTotal()+cuantosMensajesPorCliente.get(i);
+ 		System.out.println(" paquetes que llegaron: "+cuantosLlegaron);
+ 		//tiempo promedio = tiempo de los que han llegado / el total
+ 		sumaTiemposPorCliente.add(i, sumaTiemposPorCliente.get(i)+tiempoTravesia);
+ 		
+ 		long tiempoPromedio = sumaTiemposPorCliente.get(i)/cuantosLlegaron;
+ 		System.out.println("tiempo promedio: "+ tiempoPromedio+"   tiempo paquete actual: "+tiempoTravesia);
+ 		
+ 		if(cuantosMensajesPorCliente.get(i) == 0){
+ 			System.out.println("\n El cliente "+ cliente +" NO PERDIO ningun paquete");
+ 		}
 		try {
 			//perdidas son los que faltaron
 			escribirArchivo(msg, -cuantosMensajesPorCliente.get(i)+"" , ""+tiempoPromedio, ""+tiempoTravesia);
