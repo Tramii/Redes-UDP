@@ -27,28 +27,38 @@ public class ServidorArchivos {
     public ServidorArchivos(){
     	//lee el archivo
     	
-    	file = new File("./descargas/"+tituloAPedir);
+    	File file = new File("./archivos/foto.JPG");
         // Get the size of the file
         
-        fos = new FileOutputStream(file);
+    	FileOutputStream fos = new FileOutputStream(file);
         
         
-        byte [] bytes  = new byte [1024*16];
-        String tamanoEnMB = inFromServerLine.readLine();
-        System.out.println("\n ya va a recibir el archivo que pesa "+tamanoEnMB);
-        //int bytesRead = 0;
-        int current = 0;
-        int i=0;
-        int count;
-        while ((count = inFromServer.read(bytes)) > 0) {
-            fos.write(bytes, 0, count);
-            i++;
-            current+=count;
-            System.out.println("Llego paquete. Escribiendo en el archivo el mensaje numero "+i);
-            System.out.println("Descargado hasta el momento: "+current + "");
-            //descomentar la linea de abajo para ver el contenido del paquete
-            //System.out.println("contenido del paquete "+ " "+new String(bytes));
-        }
+    	 DatagramSocket srvskt = new DatagramSocket(SPort);
+    	    byte[] data =new byte[1024];
+    	    System.out.println("Enter a full file name to save data to it ?");
+    	    String path = input.next();
+    	    System.out.println("file : "+path+" will be created.");
+    	    FileOutputStream  FOS = new FileOutputStream(path);
+    	    DatagramPacket srvpkt = new DatagramPacket(data,1024);
+    	    System.out.println("listening to Port: "+SPort);
+    	    int Packetcounter=0;//packet counter
+    	    while(true)
+    	       {
+    	           srvskt.receive(srvpkt);
+    	           Packetcounter++;
+    	           String words = new String(srvpkt.getData());
+    	           InetAddress ip= srvpkt.getAddress();
+    	           int port = srvpkt.getPort();
+    	           System.out.println("Packet # :"+Packetcounter+"
+    	            Received from Host / Port: "+ip+" / "+port);
+    	           FOS.write(data);
+    	           //out16.flush();
+    	           if (Packetcounter >=100)
+    	                 break;
+
+    	      }
+    	    FOS.close();//releasing file.
+    	    System.out.println("Data has been written to the file !");
     }
 
     public void run(int port) {    
