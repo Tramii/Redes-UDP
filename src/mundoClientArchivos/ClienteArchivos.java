@@ -67,6 +67,8 @@ public class ClienteArchivos {
 			}
 			//create a packet
 			DatagramPacket clpkt=new DatagramPacket(data,data.length,IPAddress,puerto);
+			
+			//String hash = MD5.md5(clpkt);
 
 			clientSocket.send(clpkt);
 
