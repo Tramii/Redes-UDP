@@ -3,6 +3,7 @@ package mundoClient;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,26 +56,24 @@ public class ClienteArchivos {
         	clientSocket = new DatagramSocket();
         	InetAddress IPAddress = InetAddress.getByName(ip);
 			
-             //manda objetos de inicio y fin
-        	 for(int i=0; i< objetos.length ;i++)
-        	 {
-        		 Objeto aMandar =null;
-        		 objetos[i] = new Objeto(i+1,  new Long(objetos.length),new Date()); 
-        		 aMandar = objetos[i];
         	
-        			
-        		//convierte el objeto a object
-        		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        		ObjectOutput out =new ObjectOutputStream(bos);   
-        		out.writeObject(aMandar);
-        		
-        		byte [] sendData = bos.toByteArray();
-        		
-        		
-        		DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, puerto);
-        		clientSocket.send(sendPacket);
-        		System.out.println("manda datagrama "+i);
-        	 }
+        	File initialFile = new File("./archivos/foto.JPG");
+            FileInputStream targetStream = new FileInputStream(initialFile);
+		    int filesize=targetStream.available();
+		    //int neededpackets =(int)Math.ceil((double)(size/1024));
+		     byte [] data= new byte[1024];
+		     // counting bytes
+		     for (int i=0;i<1024;i++)
+		     {
+		         data[i]=(byte)targetStream.read();
+		     }
+		     //create a packet
+		     DatagramPacket clpkt=new DatagramPacket(data,data.length,IPAddress,puerto);
+		     
+		     clientSocket.send(clpkt);
+		    
+		     clientSocket.close();
+		     
         	 
         	 
              /**   SOLO EN CASO DE QUE SE QUIERA QUE EL SERVIDOR RESPONDA
