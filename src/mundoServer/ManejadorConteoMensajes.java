@@ -99,14 +99,14 @@ public class ManejadorConteoMensajes extends Thread {
 		Objeto objetoEntrante = msg.obje;
 		
 		//escribe en el file el numero del mensaje y el tiempo
-        File log = new File("./data/"+cliente+".txt");
+        File log = new File("data/"+cliente+".txt");
         PrintWriter out = new PrintWriter(new FileWriter(log, true));
         
         out.write(objetoEntrante.getPos()+": "+(tiempoTravesia )+ " ms \n  ");
         
         if(msg.obje.darTotal() == msg.obje.getPos()){
         	//es el ultimo mensaje
-        	out.write(" Perdidas/faltas totales: "+ perdidas+ " Objetos recibidos: "+msg.obje.darTotal() + " Tiempo promedio: "+ tiempoPromedio+ " ms");
+        	out.write(" Perdidas/faltas totales: "+ perdidas+ " Objetos TOTALES: "+msg.obje.darTotal() + " Tiempo promedio: "+ tiempoPromedio+ " ms");
         }
         
         out.flush();

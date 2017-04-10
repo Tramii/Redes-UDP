@@ -39,11 +39,11 @@ public class Servidor {
         DatagramSocket serverSocket = new DatagramSocket(port);
         byte[] receiveData = new byte[512];
 
-        System.out.printf("Listening on udp:%s:%d%n",
+        System.out.printf("Listening on udp:%s:%d%n ",
                 InetAddress.getLocalHost().getHostAddress(), port);     
         DatagramPacket receivePacket = new DatagramPacket(receiveData,
                            receiveData.length);
-        
+        System.out.println("IP PUBLICA A LA QUE HAY QUE ENVIAR LAS PETICIONES : 34.209.48.180");
         
         while(true)
         {
