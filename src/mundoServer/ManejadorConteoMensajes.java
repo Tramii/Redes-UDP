@@ -55,14 +55,13 @@ public class ManejadorConteoMensajes extends Thread {
 			
 			//faltan por mandar objeto.getPos()
 			cuantosMensajesPorCliente.add(i,-objeto.darTotal());
-			sumaTiemposPorCliente.add(i, tiempoTravesia);
+			//sumaTiemposPorCliente.add(i, tiempoTravesia); se hace más adelante
 		}
 		
 		//por cada mensaje estoy añandiendo en la lista de mensajes +1.
 		//al llegar n mensajes, la lista del cliente va a contener el numero n
-		//pero cuando llegue el ultimo objeto de terminación, su pos será -n
-		//osea que cuantos mensajes por cliente debe ser 0 cuando todos los mensajes sean enviados
-		//mientras no sea 0, o se perdieron paquetes del cliente o no ha terminado de mandar
+		//pero la lista se inicializo en -TODOS los que iban a llegar que es -n
+		//entonces la lista comienza  en -100, y por cada uno que llega actualiza a -99.. -98.. hasta 0
 		cuantosMensajesPorCliente.add(i, (cuantosMensajesPorCliente.get(i) + 1)  );
 		
 		System.out.println("\n El cliente "+ cliente +" paquetes que faltan: "+(-cuantosMensajesPorCliente.get(i)));
@@ -70,6 +69,7 @@ public class ManejadorConteoMensajes extends Thread {
 		long cuantosLlegaron = objeto.darTotal()+cuantosMensajesPorCliente.get(i);
 		System.out.println(" paquetes que llegaron: "+cuantosLlegaron);
 		//tiempo promedio = tiempo de los que han llegado / el total
+		
 		sumaTiemposPorCliente.add(i, sumaTiemposPorCliente.get(i)+tiempoTravesia);
 		
 		long tiempoPromedio = sumaTiemposPorCliente.get(i)/cuantosLlegaron;
