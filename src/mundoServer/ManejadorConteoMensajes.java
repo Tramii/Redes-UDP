@@ -101,7 +101,7 @@ public class ManejadorConteoMensajes extends Thread {
         File log = new File("data/"+cliente+".txt");
         PrintWriter out = new PrintWriter(new FileWriter(log, true));
         
-        out.write(objetoEntrante.getPos()+": "+(tiempoTravesia )+ " ms 			"+ " Perdidas/faltas totales: "+ perdidas+ " Objetos TOTALES: "+msg.obje.darTotal() + " Tiempo promedio: "+ tiempoPromedio+ " ms \n");
+        out.write(objetoEntrante.getPos()+": "+(tiempoTravesia )+ " ms 	 Loss: "+ perdidas+ " Tot: "+msg.obje.darTotal() + " Avg: "+ tiempoPromedio+ " ms \n");
         
         out.flush();
         out.close();
