@@ -22,36 +22,53 @@ public class ServidorArchivos {
 		int port = args.length == 0 ? 57 : Integer.parseInt(args[0]);
 		try {
 			ServidorArchivos server = new ServidorArchivos(port);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
+	
+	public DatagramSocket serverSocket;
+	public FileOutputStream  FOS;
+	public DatagramPacket serverPacket;
+	public byte[] data;
+	
 	public ServidorArchivos(int port) throws Exception{
-		//lee el archivo
-
-		File file = new File("./archivosDescarga/foto.JPG");
-
-
-		DatagramSocket serverSocket = new DatagramSocket(port);
-		byte[] data =new byte[1024];
-		System.out.println("Enter a full file name to save data to it ?");
-		FileOutputStream  FOS = new FileOutputStream(file);
-		DatagramPacket serverPacket = new DatagramPacket(data,1024);
+		int i=0;
+		serverSocket = new DatagramSocket(port);
+		data =new byte[1024];
+		System.out.println("Listo para recibir la foto por udp");
+		
+		serverPacket = new DatagramPacket(data,1024);
 		System.out.println("listening to Port: "+port);
+		while(true){
+			File file = new File("./archivosDescargados/archivo"+i+".JPG");
+			FOS = new FileOutputStream(file);
+			procesarLlegadaArchivo();
+			i++;
+		}
+	}
+	
+	public void procesarLlegadaArchivo() throws Exception{
+		//lee el archivo
 		int Packetcounter=0;//packet counter
 		while(true)
 		{
+			System.out.println("listo para recibir paquete");
 			serverSocket.receive(serverPacket);
 			Packetcounter++;
 			String words = new String(serverPacket.getData());
+			//System.out.println(words);
 			InetAddress ip= serverPacket.getAddress();
 			int portN = serverPacket.getPort();
 			System.out.println("Packet # :"+Packetcounter+"Received from Host / Port: "+ip+" / "+portN);
-			FOS.write(data);
-			//out16.flush();
-			if (Packetcounter >=10000000)
+			if(!words.startsWith("termino")){
+				FOS.write(data);
+				FOS.flush();
+			}
+			else{
 				break;
+			}
 
 		}
 		try {
@@ -59,7 +76,7 @@ public class ServidorArchivos {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}//releasing file.
-		System.out.println("Data has been written to the file !");
+		System.out.println("\n Data has been written to the file !");
 	}
 
 }
