@@ -17,27 +17,33 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Date;
 
+import ServidorArchivos.ServidorArchivos;
 import interfazClient.InterfazCliente;
 import mundoClient.Objeto;
 
 public class ClienteArchivos {
-
+	public static void main(String[] args) {
+		try {
+			ClienteArchivos cli = new ClienteArchivos("192.168.0.11",57);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	private DatagramSocket clientSocket;
 
 	private String ip;
 	private int puerto;
-	private int numObj;
 	private boolean error;
 
 	@SuppressWarnings("unused")
 	private InterfazCliente interfaz;
-	public ClienteArchivos(String dirIP, int iPuerto, int iNumObj)
+	public ClienteArchivos(String dirIP, int iPuerto)
 	{
 		error=false;
 
 		ip = dirIP;
 		puerto = (iPuerto);
-		numObj = (iNumObj);
+		iniciarConexion();
 	}
 
 	/**
@@ -55,22 +61,31 @@ public class ClienteArchivos {
 			InetAddress IPAddress = InetAddress.getByName(ip);
 
 
-			File initialFile = new File("./archivos/foto.JPG");
+			File initialFile = new File("./archivosParaDescarga/foto.JPG");
+			initialFile.createNewFile();
 			FileInputStream targetStream = new FileInputStream(initialFile);
 			int filesize=targetStream.available();
 			//int neededpackets =(int)Math.ceil((double)(size/1024));
-			byte [] data= new byte[1024];
-			// counting bytes
-			for (int i=0;i<1024;i++)
-			{
-				data[i]=(byte)targetStream.read();
+			System.out.println("tamaño archivo: "+ filesize/1024 + " kb");
+			for(int h=0;h<(filesize/1024) +1;h++){
+				byte [] data= new byte[1024];
+				// counting bytes
+				for (int i=0;i<1024;i++)
+				{
+					data[i]=(byte)targetStream.read();
+				}
+				//create a packet
+				DatagramPacket clpkt=new DatagramPacket(data,data.length,IPAddress,puerto);
+				
+				//String hash = MD5.md5(clpkt);
+				System.out.println("mandando paquete "+h);
+				clientSocket.send(clpkt);
 			}
-			//create a packet
+			byte [] data= "termino".getBytes();
+			//manda paquete de hash con el termino
 			DatagramPacket clpkt=new DatagramPacket(data,data.length,IPAddress,puerto);
-			
-			//String hash = MD5.md5(clpkt);
-
 			clientSocket.send(clpkt);
+			System.out.println("termino");
 
 			clientSocket.close();
 
