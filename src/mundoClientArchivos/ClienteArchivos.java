@@ -62,12 +62,11 @@ public class ClienteArchivos {
 
 
 			File initialFile = new File("./archivosParaDescarga/foto.JPG");
-			initialFile.createNewFile();
 			FileInputStream targetStream = new FileInputStream(initialFile);
 			int filesize=targetStream.available();
 			//int neededpackets =(int)Math.ceil((double)(size/1024));
 			System.out.println("tamaño archivo: "+ filesize/1024 + " kb");
-			for(int h=0;h<(filesize/1024) +1;h++){
+			for(int h=0;h<(filesize/1024+1);h++){
 				byte [] data= new byte[1024];
 				// counting bytes
 				for (int i=0;i<1024;i++)
@@ -81,10 +80,20 @@ public class ClienteArchivos {
 				System.out.println("mandando paquete "+h);
 				clientSocket.send(clpkt);
 			}
-			byte [] data= "termino".getBytes();
-			//manda paquete de hash con el termino
+			String fin = "termino";
+			byte [] data= fin.getBytes();
+			//manda paquete con el termino
 			DatagramPacket clpkt=new DatagramPacket(data,data.length,IPAddress,puerto);
 			clientSocket.send(clpkt);
+			
+			
+			String hash = initialFile.hashCode()+" ";
+			data= hash.getBytes();
+			//manda paquete de hash con el termino
+			clpkt=new DatagramPacket(data,data.length,IPAddress,puerto);
+			clientSocket.send(clpkt);
+			
+			
 			System.out.println("termino");
 
 			clientSocket.close();

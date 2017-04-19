@@ -32,6 +32,7 @@ public class ServidorArchivos {
 	public FileOutputStream  FOS;
 	public DatagramPacket serverPacket;
 	public byte[] data;
+	public File file;
 	
 	public ServidorArchivos(int port) throws Exception{
 		int i=0;
@@ -42,7 +43,7 @@ public class ServidorArchivos {
 		serverPacket = new DatagramPacket(data,1024);
 		System.out.println("listening to Port: "+port);
 		while(true){
-			File file = new File("./archivosDescargados/archivo"+i+".JPG");
+			file = new File("./archivosDescargados/archivo"+i+".JPG");
 			FOS = new FileOutputStream(file);
 			procesarLlegadaArchivo();
 			i++;
@@ -67,6 +68,16 @@ public class ServidorArchivos {
 				FOS.flush();
 			}
 			else{
+				System.out.println("\n listo para recibir hash");
+				serverSocket.receive(serverPacket);
+				String hashF = new String(serverPacket.getData());
+				String hash = hashF.split(" ")[0];
+				
+				if(hash.equals(file.hashCode())){
+					System.out.println(" hash confirmado");
+				}
+				System.out.println("hash:"+hash);System.out.println("hash V:"+file.hashCode());
+				
 				break;
 			}
 
